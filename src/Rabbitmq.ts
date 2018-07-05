@@ -1,6 +1,8 @@
 import * as amqplib from 'amqplib'
 import {Channel, Connection} from 'amqplib'
-import logger from './Logger'
+import {Logger} from 'klg-logger'
+
+const logger = new Logger()
 
 export class Rabbitmq {
   conn: Connection
@@ -12,7 +14,7 @@ export class Rabbitmq {
     this.url = url
     this.prefix = prefix || ''
     this.connect(url).then(function () {
-      // empty
+      logger.info('rabbitmq is ready')
     }).catch(logger.error)
   }
 
@@ -74,6 +76,5 @@ export class Rabbitmq {
   private async connect (url) {
     this.conn = await amqplib.connect(url)
     this.channel = await this.conn.createChannel()
-    logger.info('rabbitmq is ready')
   }
 }

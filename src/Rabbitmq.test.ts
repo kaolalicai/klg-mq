@@ -6,7 +6,7 @@ async function delay (time) {
   })
 }
 
-describe('Rabbitmq test', async function () {
+describe('RabbitMQ test', async function () {
   let mq: Rabbitmq
 
   beforeAll(async function () {

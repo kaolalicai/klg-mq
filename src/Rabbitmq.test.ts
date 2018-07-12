@@ -47,6 +47,24 @@ describe('RabbitMQ test', async function () {
     expect(res.messageCount).toEqual(0)
   })
 
+
+  it(' test disable ', async () => {
+    const queueName = 'a233345'
+    const data = {a: 'ssss3444', b: 233}
+    const spy = jest.fn()
+    mq.disable()
+    await mq.queue(queueName, data)
+    mq.consumeSingleQueue(queueName, 1, async function (data) {
+      spy(data)
+    })
+    await delay(200)
+    expect(spy).toHaveBeenCalledTimes(0)
+    mq.active()
+    await delay(100)
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toBeCalledWith(data)
+  })
+
   afterAll(async function () {
     await mq.channel.ackAll()
     await mq.channel.close()

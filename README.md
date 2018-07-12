@@ -19,6 +19,12 @@ mq.consumeSingleQueue(queueName, prefetch, async function (data) {
   done()
 })
 
+// 暂停消费 一般用于服务平滑重启
+mq.disable()
+
+// 重新激活
+mq.active()
+
 ```
 
 ### Test

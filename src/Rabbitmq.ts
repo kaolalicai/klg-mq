@@ -7,15 +7,25 @@ const logger = new Logger()
 export class Rabbitmq {
   conn: Connection
   channel: Channel
+  private isActive: boolean
   private url: string
   private prefix: string
 
   constructor (url: string, prefix?: string) {
     this.url = url
     this.prefix = prefix || ''
+    this.isActive = true
     this.connect(url).then(function () {
       logger.info('rabbitmq is ready')
     }).catch(logger.error)
+  }
+
+  disable () {
+    this.isActive = false
+  }
+
+  active () {
+    this.isActive = true
   }
 
   /**
@@ -46,10 +56,16 @@ export class Rabbitmq {
     const channel = this.channel
     logger.info(`consume queue ${queue}, prefetch ${prefetch}`)
 
-    channel.assertQueue(queue).then(function () {
+    channel.assertQueue(queue).then(() => {
       channel.prefetch(prefetch)
-      channel.consume(queue, function (msg) {
-        // TODO 服务停止时不再消费
+      channel.consume(queue, (msg) => {
+        if (!this.isActive) {
+          // 100 ms 才 reject，避免 mq，不然 mq 会一直consume + reject
+          setTimeout(() => {
+            channel.reject(msg)
+          }, 100)
+          return
+        }
         if (!msg) {
           logger.error(`${queue} consume msg null`)
           return

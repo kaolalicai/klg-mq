@@ -35,3 +35,6 @@ $ npm i
 $ npm test
 ```
 
+### History
+1.1.1 默认所有消息都会持久化 persistent
+

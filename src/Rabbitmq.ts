@@ -45,7 +45,7 @@ export class Rabbitmq {
     }
     logger.debug(data)
     await this.channel.assertQueue(queue)
-    this.channel.sendToQueue(queue, new Buffer(JSON.stringify(data)))
+    this.channel.sendToQueue(queue, new Buffer(JSON.stringify(data)), {persistent: true})
   }
 
   /**

@@ -6,10 +6,10 @@ async function delay (time) {
   })
 }
 
-describe('RabbitMQ test', async function () {
+describe('Rabbitmq.single.test', function () {
   let mq: Rabbitmq
 
-  beforeAll(async function () {
+  beforeAll(function () {
     mq = new Rabbitmq('amqp://joda:5672', 'test:')
   })
 
@@ -24,7 +24,7 @@ describe('RabbitMQ test', async function () {
 
   it(' test consume ', (done) => {
     const queueName = 'a1'
-    mq.consumeSingleQueue(queueName, 2, async function (data) {
+    mq.consumeSingle(queueName, 2, async function (data) {
       expect(data).toEqual({a: 'ssss', b: 233})
       done()
     })
@@ -35,7 +35,7 @@ describe('RabbitMQ test', async function () {
     const data = {a: 'ssss', b: 233}
     await mq.queue(queueName, data)
 
-    mq.consumeSingleQueue(queueName, 2, async function (data) {
+    mq.consumeSingle(queueName, 2, async function (data) {
       throw new Error('内部错误')
     })
 
@@ -52,7 +52,7 @@ describe('RabbitMQ test', async function () {
     const spy = jest.fn()
     mq.disable()
     await mq.queue(queueName, data)
-    mq.consumeSingleQueue(queueName, 1, async function (data) {
+    mq.consumeSingle(queueName, 1, async function (data) {
       spy(data)
     })
     await delay(200)
